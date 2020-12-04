@@ -1,6 +1,6 @@
 # Watchdog
 
-![Build](https://github.com/ghorbanzade/watchdog/workflows/build/badge.svg)
+![Build](https://github.com/ghorbanzade/watchdog/workflows/CI/badge.svg)
 
 ## Introduction
 

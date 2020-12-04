@@ -1,0 +1,31 @@
+#
+# Copyright 2020 Pejman Ghorbanzade. All rights reserved.
+#
+
+name: CI
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cxx: [g++-9, clang++-9]
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-python@v1
+    - name: install doxygen
+      run: sudo apt-get install -y --no-install-recommends doxygen
+    - name: install conan
+      run: |
+       pip install conan --no-cache-dir --upgrade
+       conan profile new default --detect
+       conan profile update settings.compiler.libcxx=libstdc++11 default
+    - run: ./build.sh --with-tests --with-tools
+    - run: ./build.sh --test
+    - run: ./build.sh --docs
