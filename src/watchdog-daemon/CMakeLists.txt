@@ -6,16 +6,16 @@ include(GNUInstallDirs)
 
 watchdog_find_package("spdlog")
 
-add_executable(watchdog-service "")
+add_executable(watchdog-daemon "")
 
 set_target_properties(
-        watchdog-service
+        watchdog-daemon
     PROPERTIES
         OUTPUT_NAME watchdogd
 )
 
 target_sources(
-        watchdog-service
+        watchdog-daemon
     PRIVATE
         service.cpp
         named_pipe_reader.cpp
@@ -23,7 +23,7 @@ target_sources(
 )
 
 target_link_libraries(
-        watchdog-service
+        watchdog-daemon
     PRIVATE
         watchdog
         spdlog::spdlog
@@ -31,7 +31,7 @@ target_link_libraries(
 
 source_group(
     TREE ${CMAKE_CURRENT_LIST_DIR}
-    FILES $<TARGET_PROPERTY:watchdog-service,SOURCES>
+    FILES $<TARGET_PROPERTY:watchdog-daemon,SOURCES>
 )
 
-install(TARGETS watchdog-service)
+install(TARGETS watchdog-daemon)

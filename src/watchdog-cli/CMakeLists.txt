@@ -6,22 +6,22 @@ include(GNUInstallDirs)
 
 watchdog_find_package("cxxopts")
 
-add_executable(watchdog-bin "")
+add_executable(watchdog-cli "")
 
 set_target_properties(
-        watchdog-bin
+        watchdog-cli
     PROPERTIES
         OUTPUT_NAME watchdog
 )
 
 target_sources(
-        watchdog-bin
+        watchdog-cli
     PRIVATE
-        frontend.cpp
+        main.cpp
 )
 
 target_link_libraries(
-        watchdog-bin
+        watchdog-cli
     PRIVATE
         watchdog
         cxxopts::cxxopts
@@ -29,7 +29,7 @@ target_link_libraries(
 
 source_group(
     TREE ${CMAKE_CURRENT_LIST_DIR}
-    FILES $<TARGET_PROPERTY:watchdog-bin,SOURCES>
+    FILES $<TARGET_PROPERTY:watchdog-cli,SOURCES>
 )
 
-install(TARGETS watchdog-bin)
+install(TARGETS watchdog-cli)

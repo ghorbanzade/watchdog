@@ -58,9 +58,9 @@ set(WATCHDOG_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(WATCHDOG_INCLUDE_DIR "${WATCHDOG_ROOT_DIR}/include")
 set(WATCHDOG_GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
 
-add_subdirectory(src)
-add_subdirectory(tools/frontend)
-add_subdirectory(tools/service)
+add_subdirectory(src/watchdog-lib)
+add_subdirectory(src/watchdog-cli)
+add_subdirectory(src/watchdog-daemon)
 
 if (WATCHDOG_BUILD_TESTS)
     add_subdirectory(tests)
