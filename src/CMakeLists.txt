@@ -38,16 +38,8 @@ set_target_properties(
 
 target_compile_features(
         watchdog
-    PRIVATE
-        cxx_defaulted_functions
-        cxx_lambdas
-        cxx_long_long_type
-        cxx_override
-        cxx_range_for
-        cxx_static_assert
-        cxx_strong_enums
     PUBLIC
-        cxx_auto_type
+        cxx_std_17
 )
 
 generate_export_header(

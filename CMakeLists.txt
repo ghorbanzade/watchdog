@@ -62,7 +62,8 @@ set(WATCHDOG_GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
 add_subdirectory(src)
 
 if (WATCHDOG_BUILD_TOOLS)
-    add_subdirectory(tools)
+    add_subdirectory(tools/frontend)
+    add_subdirectory(tools/service)
 endif()
 
 if (WATCHDOG_BUILD_TESTS)

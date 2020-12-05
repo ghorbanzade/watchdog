@@ -10,5 +10,5 @@
  */
 int main()
 {
-    std::cout << "hello " << watchdog::get_watchdog() << std::endl;
+    std::cout << "hello to you" << std::endl;
 }
