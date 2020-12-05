@@ -13,6 +13,7 @@ target_sources(
         watchdog
     PRIVATE
         watchdog.cpp
+        asset_queue.cpp
 )
 
 target_include_directories(

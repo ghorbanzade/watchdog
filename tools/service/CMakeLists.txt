@@ -18,6 +18,8 @@ target_sources(
         watchdog-service
     PRIVATE
         service.cpp
+        named_pipe_reader.cpp
+        named_pipe_reader.hpp
 )
 
 target_link_libraries(
