@@ -26,7 +26,7 @@ void named_pipe_reader(NamedPipeMessageQueue& messageQueue)
 
         if (content.empty())
         {
-            std::this_thread::sleep_for(2s);
+            std::this_thread::sleep_for(500ms);
             continue;
         }
 
@@ -55,27 +55,27 @@ void inventory_manager(NamedPipeMessageQueue& messageQueue, AssetInventory& inve
     while (true)
     {
         auto asset = messageQueue.pop_message();
-        if (asset->_mode == "a")
+        if (asset->message_type == "a")
         {
-            inventory.add(asset->_filepath.value());
+            inventory.add(asset->message_args.value());
             writer.write("a,OK");
         }
-        if (asset->_mode == "r")
+        if (asset->message_type == "r")
         {
-            inventory.remove(asset->_filepath.value());
+            inventory.remove(asset->message_args.value());
             writer.write("r,OK");
         }
-        if (asset->_mode == "c")
+        if (asset->message_type == "c")
         {
             inventory.clear();
             writer.write("c,OK");
         }
-        if (asset->_mode == "l")
+        if (asset->message_type == "l")
         {
             writer.write(inventory.list());
             writer.write("l,OK");
         }
-        std::cout << fmt::format("received task: {} ({})", asset->_filepath.value_or(""), asset->_mode) << std::endl;
+        spdlog::info("received task ({}): {}", asset->message_type, asset->message_args.value_or(""));
     }
 }
 

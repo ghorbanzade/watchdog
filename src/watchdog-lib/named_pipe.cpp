@@ -14,12 +14,12 @@
 /**
  *
  */
-NamedPipeReader::NamedPipeReader(const std::filesystem::path& pipe_path, const int flags)
-    : _path(pipe_path.string())
+NamedPipeReader::NamedPipeReader(const std::filesystem::path& path, const int mode)
+    : _path(path.string())
 {
-    std::filesystem::create_directories(pipe_path.parent_path());
+    std::filesystem::create_directories(path.parent_path());
     mkfifo(_path.c_str(), 666);
-    if ((_fd = open(_path.c_str(), flags)) == -1)
+    if ((_fd = open(_path.c_str(), mode)) == -1)
     {
         spdlog::error("failed to create named pipe at {}", _path);
         return;
@@ -70,12 +70,12 @@ bool NamedPipeReader::expect_response(const std::string& expected)
 /**
  *
  */
-NamedPipeWriter::NamedPipeWriter(const std::filesystem::path& pipe_path, const int flags)
-    : _path(pipe_path.string())
+NamedPipeWriter::NamedPipeWriter(const std::filesystem::path& path, const int mode)
+    : _path(path.string())
 {
-    std::filesystem::create_directories(pipe_path.parent_path());
+    std::filesystem::create_directories(path.parent_path());
     mkfifo(_path.c_str(), 666);
-    if ((_fd = open(_path.c_str(), flags)) == -1)
+    if ((_fd = open(_path.c_str(), mode)) == -1)
     {
         spdlog::error("failed to create named pipe at {}", _path);
         return;
@@ -111,7 +111,7 @@ void NamedPipeWriter::write(const std::string& message)
  *
  */
 NamedPipeMessage::NamedPipeMessage(const std::string& message)
-    : _mode(""), _filepath(std::nullopt)
+    : message_type(""), message_args(std::nullopt)
 {
     std::string buf;
     std::stringstream ss(message);
@@ -128,11 +128,11 @@ NamedPipeMessage::NamedPipeMessage(const std::string& message)
     const auto& it = std::find(modes.begin(), modes.end(), tokens.at(0));
     if (modes.end() != it)
     {
-        _mode = *it;
+        message_type = *it;
     }
     if (1 < tokens.size())
     {
-        _filepath = tokens.at(1);
+        message_args = tokens.at(1);
     }
 }
 

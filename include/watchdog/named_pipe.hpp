@@ -43,12 +43,12 @@ public:
      *          time when this object goes out of scope (RAII).
      *
      * @param path full path to the Named Pipe.
-     * @param flags flags to be used when opening the Named Pipe.
+     * @param mode flags to be used when opening the Named Pipe.
      *
      * @todo Consider adding O_CREAT to handle first-time cases when the pipe
      *       does not exist yet.
      */
-    NamedPipeReader(const std::filesystem::path& path, const int flags = O_RDONLY);
+    NamedPipeReader(const std::filesystem::path& path, const int mode = O_RDONLY);
 
     /**
      * Destroys named pipe resources if they were ever allocated.
@@ -56,7 +56,16 @@ public:
     ~NamedPipeReader();
 
     /**
+     * @brief Provides any content available on the Named Pipe.
      *
+     * @details This function is blocking until there is content on the
+     *          Named Pipe.
+     *
+     * @todo Content read from the Named Pipe is considered consumed.
+     *       This may lead to some unintended behavior if multiple instances
+     *       of the tool are running at the same time.
+     *
+     * @return content read from the Named Pipe.
      */
     std::string read();
 
@@ -97,12 +106,12 @@ public:
      *          time when this object goes out of scope (RAII).
      *
      * @param path full path to the Named Pipe.
-     * @param flags Flags to be used when opening the Named Pipe.
+     * @param mode flags to be used when opening the Named Pipe.
      *
      * @todo Consider adding O_CREAT to handle first-time cases when the pipe
      *       does not exist yet.
      */
-    NamedPipeWriter(const std::filesystem::path& path, const int flags = O_WRONLY);
+    NamedPipeWriter(const std::filesystem::path& path, const int mode = O_WRONLY);
 
     /**
      * @details cleans up the acquired named pipe resource if it was ever allocated.
@@ -135,18 +144,26 @@ public:
  */
 struct WATCHDOG_API NamedPipeMessage
 {
-    std::string _mode;
-    std::optional<std::string> _filepath;
+    std::string message_type;
+    std::optional<std::string> message_args;
 
     /**
-     *
+     * @brief Creates a message object from a given string.
+     * 
+     * @details This constructor serves as a deserializer for "requests"
+     *          messages, read from the Named Pipe.
      */
     NamedPipeMessage(const std::string& message);
 
     /**
+     * @brief Checks if this message is valid.
      *
+     * @details Helps serve as a simple filter to discard garbage content
+     *          potentially written by bad actors.
+     * 
+     * @return whether this message corresponds to a valid request
      */
-    inline bool valid() const { return !_mode.empty(); }
+    inline bool valid() const { return !message_type.empty(); }
 };
 
 /**
