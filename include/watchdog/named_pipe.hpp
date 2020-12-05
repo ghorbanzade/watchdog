@@ -5,12 +5,9 @@
 #pragma once
 
 #include "watchdog/lib_api.hpp"
-#include <condition_variable>
 #include <fcntl.h>
 #include <filesystem>
-#include <mutex>
 #include <optional>
-#include <queue>
 
 /**
  * @file named_pipe.hpp
@@ -164,25 +161,4 @@ struct WATCHDOG_API NamedPipeMessage
      * @return whether this message corresponds to a valid request
      */
     inline bool valid() const { return !message_type.empty(); }
-};
-
-/**
- *
- */
-class WATCHDOG_API NamedPipeMessageQueue
-{
-    std::mutex _mutex;
-    std::condition_variable _cv;
-    std::queue<std::unique_ptr<NamedPipeMessage>> _queue;
-
-public:
-    /**
-     *
-     */
-    void push_message(std::unique_ptr<NamedPipeMessage> assetDir);
-
-    /**
-     *
-     */
-    std::unique_ptr<NamedPipeMessage> pop_message();
 };

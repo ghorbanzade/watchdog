@@ -5,10 +5,13 @@
 #include "spdlog/spdlog.h"
 #include "watchdog/asset_inventory.hpp"
 #include "watchdog/named_pipe.hpp"
+#include "watchdog/queue.hpp"
 #include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <thread>
+
+using NamedPipeMessageQueue = watchdog::Queue<NamedPipeMessage>;
 
 /**
  * Listens to a dedicated named pipe for new directories to watch.
@@ -41,7 +44,7 @@ void named_pipe_reader(NamedPipeMessageQueue& messageQueue)
 
         // push message into queue for async processing
 
-        messageQueue.push_message(std::move(message));
+        messageQueue.push_item(std::move(message));
     }
 }
 
@@ -53,7 +56,7 @@ void inventory_manager(NamedPipeMessageQueue& messageQueue, AssetInventory& inve
     NamedPipeWriter writer("/tmp/watchdog/sout", O_RDWR);
     while (true)
     {
-        auto asset = messageQueue.pop_message();
+        auto asset = messageQueue.pop_item();
         if (asset->message_type == "a")
         {
             inventory.add(asset->message_args.value());

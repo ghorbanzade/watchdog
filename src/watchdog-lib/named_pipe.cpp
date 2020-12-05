@@ -135,33 +135,3 @@ NamedPipeMessage::NamedPipeMessage(const std::string& message)
         message_args = tokens.at(1);
     }
 }
-
-/**
- *
- */
-void NamedPipeMessageQueue::push_message(std::unique_ptr<NamedPipeMessage> assetDir)
-{
-    std::unique_lock<std::mutex> lock(_mutex);
-    auto wasEmpty = _queue.empty();
-    _queue.push(std::move(assetDir));
-    lock.unlock();
-    if (wasEmpty)
-    {
-        _cv.notify_one();
-    }
-}
-
-/**
- *
- */
-std::unique_ptr<NamedPipeMessage> NamedPipeMessageQueue::pop_message()
-{
-    std::unique_lock<std::mutex> lock(_mutex);
-    while (_queue.empty())
-    {
-        _cv.wait(lock);
-    }
-    auto asset = std::move(_queue.front());
-    _queue.pop();
-    return asset;
-}
