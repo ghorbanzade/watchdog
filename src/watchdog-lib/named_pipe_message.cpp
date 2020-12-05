@@ -3,15 +3,16 @@
  */
 
 #include "watchdog/named_pipe_message.hpp"
+#include <iostream>
 
 /**
  *
  */
-void AssetQueue::add_asset(const std::filesystem::path& assetDir)
+void NamedPipeMessageQueue::add_asset(std::unique_ptr<NamedPipeMessage> assetDir)
 {
     std::unique_lock<std::mutex> lock(_mutex);
     auto wasEmpty = _queue.empty();
-    _queue.push(assetDir);
+    _queue.push(std::move(assetDir));
     lock.unlock();
     if (wasEmpty)
     {
@@ -22,14 +23,38 @@ void AssetQueue::add_asset(const std::filesystem::path& assetDir)
 /**
  *
  */
-std::filesystem::path AssetQueue::take_asset()
+std::unique_ptr<NamedPipeMessage> NamedPipeMessageQueue::take_asset()
 {
     std::unique_lock<std::mutex> lock(_mutex);
     while (_queue.empty())
     {
         _cv.wait(lock);
     }
-    auto asset = _queue.front();
+    auto asset = std::move(_queue.front());
     _queue.pop();
     return asset;
+}
+
+/**
+ *
+ */
+std::unique_ptr<NamedPipeMessage> NamedPipeMessage::deserialize(
+    const std::string& message)
+{
+    std::string buf;
+    std::stringstream ss(message);
+    std::vector<std::string> tokens;
+    while (getline(ss, buf, ','))
+    {
+        tokens.push_back(buf);
+    }
+    if (tokens.size() == 0)
+    {
+        return nullptr;
+    }
+    if (tokens.size() == 1)
+    {
+        return std::make_unique<NamedPipeMessage>(tokens.at(0), "");
+    }
+    return std::make_unique<NamedPipeMessage>(tokens.at(0), tokens.at(1));
 }

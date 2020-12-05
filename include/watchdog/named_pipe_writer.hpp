@@ -5,6 +5,7 @@
 #pragma once
 
 #include <filesystem>
+#include "watchdog/named_pipe_message.hpp"
 
 /**
  *

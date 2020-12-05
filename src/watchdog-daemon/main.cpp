@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <iostream>
 #include <thread>
+#include <iostream>
 
 #include "watchdog/named_pipe_message.hpp"
 #include "watchdog/named_pipe_reader.hpp"
@@ -17,44 +18,41 @@
  */
 void listen_for_asset_directories(
     const std::filesystem::path& pipePath,
-    AssetQueue& assetQueue)
+    NamedPipeMessageQueue& NamedPipeMessageQueue)
 {
     using namespace std::chrono_literals;
     NamedPipeReader reader(pipePath);
     while (true)
     {
         const auto& content = reader.read();
+
         // if there is nothing to read, we have nothing to do
         if (content.empty())
         {
             std::this_thread::sleep_for(2s);
             continue;
         }
+
         spdlog::info("received command: {}", content);
-        if (content == "exit")
+        auto query = NamedPipeMessage::deserialize(content);
+        if (!query)
         {
-            spdlog::warn("no longer listening for asset directories");
-            break;
-        }
-        std::filesystem::path assetEntry(content);
-        if (!std::filesystem::is_directory(assetEntry))
-        {
-            spdlog::warn("asset directory is invalid");
+            spdlog::warn("invalid command: {}", content);
             continue;
         }
-        assetQueue.add_asset(assetEntry);
+        NamedPipeMessageQueue.add_asset(std::move(query));
     }
 }
 
 /**
  *
  */
-void monitor_assets(AssetQueue& assetQueue)
+void monitor_assets(NamedPipeMessageQueue& NamedPipeMessageQueue)
 {
     while (true)
     {
-        auto asset = assetQueue.take_asset();
-        std::cout << "Got some work: " << asset << std::endl;
+        auto asset = NamedPipeMessageQueue.take_asset();
+        std::cout << fmt::format("received task: {} ({})", asset->_filepath.value_or(""), asset->_mode) << std::endl;
     }
 }
 
@@ -63,9 +61,9 @@ void monitor_assets(AssetQueue& assetQueue)
  */
 int main()
 {
-    AssetQueue assetQueue;
-    std::thread pipe_listener(listen_for_asset_directories, "/tmp/watchdog", std::ref(assetQueue));
-    std::thread asset_monitor(monitor_assets, std::ref(assetQueue));
+    NamedPipeMessageQueue NamedPipeMessageQueue;
+    std::thread pipe_listener(listen_for_asset_directories, "/tmp/watchdog", std::ref(NamedPipeMessageQueue));
+    std::thread asset_monitor(monitor_assets, std::ref(NamedPipeMessageQueue));
     pipe_listener.join();
     asset_monitor.join();
 }

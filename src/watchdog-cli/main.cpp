@@ -5,6 +5,7 @@
 #include "cxxopts.hpp"
 #include "fmt/format.h"
 #include "spdlog/spdlog.h"
+#include "watchdog/named_pipe_message.hpp"
 #include "watchdog/named_pipe_writer.hpp"
 #include "watchdog/watchdog.hpp"
 #include <iostream>
@@ -137,6 +138,7 @@ int main(int argc, char* argv[])
             writer.write(fmt::format("a,{}", dir));
             spdlog::info("added directory {} to the watch-list", dir);
         }
+        return EXIT_SUCCESS;
     }
 
     if (args->count("remove"))
@@ -148,6 +150,19 @@ int main(int argc, char* argv[])
             writer.write(fmt::format("r,{}", dir));
             spdlog::info("removed directory {} from the watch-list", dir);
         }
+        return EXIT_SUCCESS;
+    }
+
+    if (args->count("list"))
+    {
+        writer.write("l");
+        return EXIT_SUCCESS;
+    }
+
+    if (args->count("monitor"))
+    {
+        writer.write("m");
+        return EXIT_SUCCESS;
     }
 
     return EXIT_SUCCESS;
