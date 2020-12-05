@@ -62,11 +62,6 @@ void inventory_manager(NamedPipeMessageQueue& messageQueue, AssetInventory& inve
             inventory.add(asset->message_args.value());
             writer.write("a,OK");
         }
-        if (asset->message_type == "r")
-        {
-            inventory.remove(asset->message_args.value());
-            writer.write("r,OK");
-        }
         if (asset->message_type == "c")
         {
             inventory.clear();

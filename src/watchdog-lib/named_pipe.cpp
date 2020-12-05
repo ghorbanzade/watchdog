@@ -124,7 +124,7 @@ NamedPipeMessage::NamedPipeMessage(const std::string& message)
     {
         return;
     }
-    const auto& modes = { "a", "r", "l", "c", "m" };
+    const auto& modes = { "a", "l", "c", "m" };
     const auto& it = std::find(modes.begin(), modes.end(), tokens.at(0));
     if (modes.end() != it)
     {

@@ -19,17 +19,6 @@ void AssetInventory::add(const std::filesystem::path& directory)
 /**
  *
  */
-void AssetInventory::remove(const std::filesystem::path& directory)
-{
-    for(const auto& filepath: std::filesystem::recursive_directory_iterator(directory))
-    {
-        assets.erase(filepath.path().string());
-    }
-}
-
-/**
- *
- */
 void AssetInventory::clear()
 {
     assets.clear();

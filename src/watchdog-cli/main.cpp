@@ -26,7 +26,6 @@ std::optional<cxxopts::ParseResult> parse_command_line_arguments(int argc, char*
         ("c,clear", "clear the watch-list", cxxopts::value<bool>())
         ("l,list", "list directories on the watch-list", cxxopts::value<bool>())
         ("m,monitor", "prints, in real-time, filesystem events occuring in any directory on the watch-list", cxxopts::value<bool>())
-        ("r,remove", "remove a given directory from watch-list", cxxopts::value<std::vector<std::string>>())
         ("help", "prints all supported command line options");
     // clang-format on
 
@@ -58,7 +57,7 @@ std::optional<cxxopts::ParseResult> parse_command_line_arguments(int argc, char*
         // several options at the same time or no option at all, print the help
         // message and exit.
 
-        const auto& opts = { "add", "clear", "list", "monitor", "remove" };
+        const auto& opts = { "add", "clear", "list", "monitor" };
         const auto opt_exists = [&](const auto& opt) { return result.count(opt); };
         const auto opts_count = std::count_if(opts.begin(), opts.end(), opt_exists);
         if (1 < opts_count)
@@ -138,18 +137,6 @@ int main(int argc, char* argv[])
             spdlog::info("added directory {} to the watch-list", dir);
         }
         return reader.expect_response("a,OK") ? EXIT_SUCCESS : EXIT_FAILURE;
-    }
-
-    if (args->count("remove"))
-    {
-        const auto& path_args = args.value()["remove"].as<std::vector<std::string>>();
-        const auto& dirs = validate_path_arguments(path_args);
-        for (const auto& dir : dirs)
-        {
-            writer.write(fmt::format("r,{}", dir));
-            spdlog::info("removed directory {} from the watch-list", dir);
-        }
-        return reader.expect_response("r,OK") ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     if (args->count("list"))

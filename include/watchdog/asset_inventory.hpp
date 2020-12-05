@@ -26,11 +26,6 @@ public:
     /**
      *
      */
-    void remove(const std::filesystem::path& directory);
-
-    /**
-     *
-     */
     void clear();
 
     /**
