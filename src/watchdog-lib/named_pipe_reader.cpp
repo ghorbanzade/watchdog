@@ -13,11 +13,16 @@
  *
  */
 NamedPipeReader::NamedPipeReader(const std::filesystem::path& pipe_path)
-    : _path(pipe_path.string().c_str())
+    : _path(pipe_path.string())
 {
-    mkfifo(_path, 666);
-    _fd = open(_path, O_RDONLY);
-    spdlog::info("created named pipe");
+    std::filesystem::create_directories(pipe_path.parent_path());
+    mkfifo(_path.c_str(), 666);
+    if ((_fd = open(_path.c_str(), O_RDONLY)) == -1)
+    {
+        spdlog::error("failed to create named pipe at {}", _path);
+        return;
+    }
+    spdlog::info("created named pipe at {}", _path);
 }
 
 /**
@@ -37,22 +42,15 @@ NamedPipeReader::~NamedPipeReader()
  */
 std::string NamedPipeReader::read()
 {
-    if (!_fd && std::filesystem::exists(_path))
-    {
-        mkfifo(_path, 666);
-        _fd = open(_path, O_RDONLY);
-        spdlog::info("created named pipe");
-        // @todo handle case if open fails (_fd == -1)
-    }
     const auto content_size = ::read(_fd, _buffer, sizeof(_buffer));
     if (content_size < 0)
     {
         spdlog::warn("failed to read from named pipe");
-        return {};
+        return "";
     }
     if (content_size == 0)
     {
-        return {};
+        return "";
     }
     return std::string(_buffer, content_size - 1);
 }

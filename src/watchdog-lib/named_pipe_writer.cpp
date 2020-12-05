@@ -13,11 +13,16 @@
  *
  */
 NamedPipeWriter::NamedPipeWriter(const std::filesystem::path& pipe_path)
-    : _path(pipe_path.string().c_str())
+    : _path(pipe_path.string())
 {
-    mkfifo(_path, 666);
-    _fd = open(_path, O_WRONLY);
-    spdlog::debug("created named pipe");
+    std::filesystem::create_directories(pipe_path.parent_path());
+    mkfifo(_path.c_str(), 666);
+    if ((_fd = open(_path.c_str(), O_WRONLY)) == -1)
+    {
+        spdlog::error("failed to create named pipe at {}", _path);
+        return;
+    }
+    spdlog::info("created named pipe at {}", _path);
 }
 
 /**
@@ -37,13 +42,6 @@ NamedPipeWriter::~NamedPipeWriter()
  */
 void NamedPipeWriter::write(const std::string& message)
 {
-    if (!_fd && std::filesystem::exists(_path))
-    {
-        mkfifo(_path, 666);
-        _fd = open(_path, O_WRONLY);
-        spdlog::info("created named pipe");
-        // @todo handle case if open fails (_fd == -1)
-    }
     const auto content_size = ::write(_fd, &message[0], message.size() + 1);
     if (content_size < 0)
     {

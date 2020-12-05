@@ -12,7 +12,7 @@
  */
 class NamedPipeWriter
 {
-    const char* _path; /**< full path to the named pipe */
+    const std::string _path; /**< full path to the named pipe */
     char _buffer[1024]; /**< buffer to read messages from */
     mutable int _fd; /**< descriptor for the named pipe */
 public:
