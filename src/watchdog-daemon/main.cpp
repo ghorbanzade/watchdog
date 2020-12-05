@@ -11,7 +11,8 @@
 #include <iostream>
 #include <thread>
 
-using NamedPipeMessageQueue = watchdog::Queue<NamedPipeMessage>;
+using namespace watchdog;
+using NamedPipeMessageQueue = Queue<NamedPipeMessage>;
 
 /**
  * Listens to a dedicated named pipe for new directories to watch.

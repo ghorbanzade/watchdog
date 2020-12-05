@@ -5,12 +5,14 @@
 #include "watchdog/asset_inventory.hpp"
 #include <sstream>
 
+using namespace watchdog;
+
 /**
  *
  */
 void AssetInventory::add(const std::filesystem::path& directory)
 {
-    for(const auto& filepath: std::filesystem::recursive_directory_iterator(directory))
+    for (const auto& filepath : std::filesystem::recursive_directory_iterator(directory))
     {
         assets.insert(filepath.path().string());
     }
@@ -30,7 +32,7 @@ void AssetInventory::clear()
 std::string AssetInventory::list() const
 {
     std::ostringstream buffer;
-    for (const auto& asset: assets)
+    for (const auto& asset : assets)
     {
         buffer << asset << "\n";
     }

@@ -117,8 +117,8 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    NamedPipeWriter writer("/tmp/watchdog/sin");
-    NamedPipeReader reader("/tmp/watchdog/sout");
+    watchdog::NamedPipeWriter writer("/tmp/watchdog/sin");
+    watchdog::NamedPipeReader reader("/tmp/watchdog/sout");
 
     if (args->count("clear"))
     {

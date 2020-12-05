@@ -4,32 +4,44 @@
 
 #pragma once
 
+/**
+ * @file named_pipe.hpp
+ *
+ * @brief Utility classes for interacting with Named Pipes.
+ *
+ * @author Pejman Ghorbanzade <pejman@ghorbanzade.com>
+ * @date 2020
+ */
+
 #include "watchdog/lib_api.hpp"
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 #include <unordered_set>
 
-/**
- *
- */
-class WATCHDOG_API AssetInventory
-{
-    std::unordered_set<std::string> assets;
-
-public:
+namespace watchdog {
 
     /**
      *
      */
-    void add(const std::filesystem::path& directory);
+    class WATCHDOG_API AssetInventory
+    {
+        std::unordered_set<std::string> assets;
 
-    /**
-     *
-     */
-    void clear();
+    public:
+        /**
+         *
+         */
+        void add(const std::filesystem::path& directory);
 
-    /**
-     *
-     */
-    std::string list() const;
-};
+        /**
+         *
+         */
+        void clear();
+
+        /**
+         *
+         */
+        std::string list() const;
+    };
+
+} // namespace watchdog

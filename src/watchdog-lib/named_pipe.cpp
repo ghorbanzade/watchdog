@@ -11,6 +11,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+using namespace watchdog;
+
 /**
  *
  */
@@ -111,7 +113,8 @@ void NamedPipeWriter::write(const std::string& message)
  *
  */
 NamedPipeMessage::NamedPipeMessage(const std::string& message)
-    : message_type(""), message_args(std::nullopt)
+    : message_type("")
+    , message_args(std::nullopt)
 {
     std::string buf;
     std::stringstream ss(message);
