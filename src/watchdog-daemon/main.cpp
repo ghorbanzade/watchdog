@@ -3,15 +3,13 @@
  */
 
 #include "spdlog/spdlog.h"
+#include "watchdog/asset_inventory.hpp"
+#include "watchdog/named_pipe.hpp"
 #include "watchdog/watchdog.hpp"
 #include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <thread>
-
-#include "watchdog/asset_inventory.hpp"
-#include "watchdog/named_pipe_message.hpp"
-#include "watchdog/named_pipe_reader.hpp"
 
 /**
  * Listens to a dedicated named pipe for new directories to watch.
@@ -53,12 +51,29 @@ void named_pipe_reader(NamedPipeMessageQueue& messageQueue)
  */
 void inventory_manager(NamedPipeMessageQueue& messageQueue, AssetInventory& inventory)
 {
+    NamedPipeWriter writer("/tmp/watchdog/sout", O_RDWR);
     while (true)
     {
         auto asset = messageQueue.pop_message();
         if (asset->_mode == "a")
         {
             inventory.add(asset->_filepath.value());
+            writer.write("a,OK");
+        }
+        if (asset->_mode == "r")
+        {
+            inventory.remove(asset->_filepath.value());
+            writer.write("r,OK");
+        }
+        if (asset->_mode == "c")
+        {
+            inventory.clear();
+            writer.write("c,OK");
+        }
+        if (asset->_mode == "l")
+        {
+            writer.write(inventory.list());
+            writer.write("l,OK");
         }
         std::cout << fmt::format("received task: {} ({})", asset->_filepath.value_or(""), asset->_mode) << std::endl;
     }

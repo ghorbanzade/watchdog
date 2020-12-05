@@ -3,7 +3,7 @@
  */
 
 #include "watchdog/asset_inventory.hpp"
-#include <iostream>
+#include <sstream>
 
 /**
  *
@@ -12,7 +12,6 @@ void AssetInventory::add(const std::filesystem::path& directory)
 {
     for(const auto& filepath: std::filesystem::recursive_directory_iterator(directory))
     {
-        std::cout << "adding: " << filepath << std::endl;
         assets.insert(filepath.path().string());
     }
 }
@@ -24,7 +23,6 @@ void AssetInventory::remove(const std::filesystem::path& directory)
 {
     for(const auto& filepath: std::filesystem::recursive_directory_iterator(directory))
     {
-        std::cout << "removing: " << filepath << std::endl;
         assets.erase(filepath.path().string());
     }
 }
@@ -32,7 +30,20 @@ void AssetInventory::remove(const std::filesystem::path& directory)
 /**
  *
  */
+void AssetInventory::clear()
+{
+    assets.clear();
+}
+
+/**
+ *
+ */
 std::string AssetInventory::list() const
 {
-    return "hello";
+    std::ostringstream buffer;
+    for (const auto& asset: assets)
+    {
+        buffer << asset << "\n";
+    }
+    return buffer.str();
 }

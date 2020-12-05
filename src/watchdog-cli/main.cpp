@@ -5,8 +5,7 @@
 #include "cxxopts.hpp"
 #include "fmt/format.h"
 #include "spdlog/spdlog.h"
-#include "watchdog/named_pipe_message.hpp"
-#include "watchdog/named_pipe_writer.hpp"
+#include "watchdog/named_pipe.hpp"
 #include "watchdog/watchdog.hpp"
 #include <iostream>
 #include <optional>
@@ -121,12 +120,13 @@ int main(int argc, char* argv[])
     }
 
     NamedPipeWriter writer("/tmp/watchdog/sin");
+    NamedPipeReader reader("/tmp/watchdog/sout");
 
     if (args->count("clear"))
     {
         writer.write("c");
         spdlog::info("cleared the list of directories under watch");
-        return EXIT_SUCCESS;
+        return reader.expect_response("c,OK") ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     if (args->count("add"))
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
             writer.write(fmt::format("a,{}", dir));
             spdlog::info("added directory {} to the watch-list", dir);
         }
-        return EXIT_SUCCESS;
+        return reader.expect_response("a,OK") ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     if (args->count("remove"))
@@ -150,13 +150,25 @@ int main(int argc, char* argv[])
             writer.write(fmt::format("r,{}", dir));
             spdlog::info("removed directory {} from the watch-list", dir);
         }
-        return EXIT_SUCCESS;
+        return reader.expect_response("r,OK") ? EXIT_SUCCESS : EXIT_FAILURE;
     }
 
     if (args->count("list"))
     {
         writer.write("l");
-        return EXIT_SUCCESS;
+        std::istringstream iss(reader.read());
+        std::string line;
+        std::cout << "Watchdog is currently monitoring the following files:\n";
+        unsigned row = 1;
+        while (std::getline(iss, line))
+        {
+            if (line == "l,OK")
+            {
+                std::cout << fmt::format("{0:─^{1}}\n", "", 20) << std::endl;
+                return EXIT_SUCCESS;
+            }
+            std::cout << fmt::format("{:>4} \"{}\"", row++, line) << std::endl;
+        }
     }
 
     if (args->count("monitor"))
@@ -165,5 +177,5 @@ int main(int argc, char* argv[])
         return EXIT_SUCCESS;
     }
 
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
 }

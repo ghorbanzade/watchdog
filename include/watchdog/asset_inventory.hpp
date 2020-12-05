@@ -31,5 +31,10 @@ public:
     /**
      *
      */
+    void clear();
+
+    /**
+     *
+     */
     std::string list() const;
 };
