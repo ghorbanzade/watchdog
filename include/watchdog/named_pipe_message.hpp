@@ -5,10 +5,10 @@
 #pragma once
 
 #include "watchdog/lib_api.hpp"
-#include "fmt/format.h"
 #include <condition_variable>
 #include <filesystem>
 #include <mutex>
+#include <optional>
 #include <queue>
 
 struct WATCHDOG_API NamedPipeMessage
@@ -18,7 +18,8 @@ struct WATCHDOG_API NamedPipeMessage
     static std::unique_ptr<NamedPipeMessage> deserialize(const std::string& message);
 
     NamedPipeMessage(const std::string& mode, const std::string& filepath)
-        : _mode(mode), _filepath(filepath.empty() ? std::optional<std::string>() : filepath)
+        : _mode(mode)
+        , _filepath(filepath.empty() ? std::optional<std::string>() : filepath)
     {
     }
 };
@@ -36,10 +37,10 @@ public:
     /**
      *
      */
-    void add_asset(std::unique_ptr<NamedPipeMessage> assetDir);
+    void push_message(std::unique_ptr<NamedPipeMessage> assetDir);
 
     /**
      *
      */
-    std::unique_ptr<NamedPipeMessage> take_asset();
+    std::unique_ptr<NamedPipeMessage> pop_message();
 };

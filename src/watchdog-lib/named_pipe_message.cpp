@@ -4,11 +4,12 @@
 
 #include "watchdog/named_pipe_message.hpp"
 #include <iostream>
+#include <string>
 
 /**
  *
  */
-void NamedPipeMessageQueue::add_asset(std::unique_ptr<NamedPipeMessage> assetDir)
+void NamedPipeMessageQueue::push_message(std::unique_ptr<NamedPipeMessage> assetDir)
 {
     std::unique_lock<std::mutex> lock(_mutex);
     auto wasEmpty = _queue.empty();
@@ -23,7 +24,7 @@ void NamedPipeMessageQueue::add_asset(std::unique_ptr<NamedPipeMessage> assetDir
 /**
  *
  */
-std::unique_ptr<NamedPipeMessage> NamedPipeMessageQueue::take_asset()
+std::unique_ptr<NamedPipeMessage> NamedPipeMessageQueue::pop_message()
 {
     std::unique_lock<std::mutex> lock(_mutex);
     while (_queue.empty())
@@ -44,7 +45,7 @@ std::unique_ptr<NamedPipeMessage> NamedPipeMessage::deserialize(
     std::string buf;
     std::stringstream ss(message);
     std::vector<std::string> tokens;
-    while (getline(ss, buf, ','))
+    while (std::getline(ss, buf, ','))
     {
         tokens.push_back(buf);
     }

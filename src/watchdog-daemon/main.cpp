@@ -8,20 +8,18 @@
 #include <filesystem>
 #include <iostream>
 #include <thread>
-#include <iostream>
 
+#include "watchdog/asset_inventory.hpp"
 #include "watchdog/named_pipe_message.hpp"
 #include "watchdog/named_pipe_reader.hpp"
 
 /**
  * Listens to a dedicated named pipe for new directories to watch.
  */
-void listen_for_asset_directories(
-    const std::filesystem::path& pipePath,
-    NamedPipeMessageQueue& NamedPipeMessageQueue)
+void named_pipe_listener(NamedPipeMessageQueue& messageQueue)
 {
     using namespace std::chrono_literals;
-    NamedPipeReader reader(pipePath);
+    NamedPipeReader reader("/tmp/watchdog");
     while (true)
     {
         const auto& content = reader.read();
@@ -34,24 +32,24 @@ void listen_for_asset_directories(
         }
 
         spdlog::info("received command: {}", content);
-        auto query = NamedPipeMessage::deserialize(content);
-        if (!query)
+        auto message = NamedPipeMessage::deserialize(content);
+        if (!message)
         {
             spdlog::warn("invalid command: {}", content);
             continue;
         }
-        NamedPipeMessageQueue.add_asset(std::move(query));
+        messageQueue.push_message(std::move(message));
     }
 }
 
 /**
  *
  */
-void monitor_assets(NamedPipeMessageQueue& NamedPipeMessageQueue)
+void inventory_manager(NamedPipeMessageQueue& messageQueue)
 {
     while (true)
     {
-        auto asset = NamedPipeMessageQueue.take_asset();
+        auto asset = messageQueue.pop_message();
         std::cout << fmt::format("received task: {} ({})", asset->_filepath.value_or(""), asset->_mode) << std::endl;
     }
 }
@@ -61,9 +59,12 @@ void monitor_assets(NamedPipeMessageQueue& NamedPipeMessageQueue)
  */
 int main()
 {
-    NamedPipeMessageQueue NamedPipeMessageQueue;
-    std::thread pipe_listener(listen_for_asset_directories, "/tmp/watchdog", std::ref(NamedPipeMessageQueue));
-    std::thread asset_monitor(monitor_assets, std::ref(NamedPipeMessageQueue));
-    pipe_listener.join();
-    asset_monitor.join();
+    AssetInventory inventory;
+    NamedPipeMessageQueue messageQueue;
+
+    std::vector<std::thread> workers;
+    workers.push_back(std::thread(named_pipe_listener, std::ref(messageQueue)));
+    workers.push_back(std::thread(inventory_manager, std::ref(messageQueue)));
+
+    std::for_each(workers.begin(), workers.end(), [](auto& t) { t.join(); });
 }

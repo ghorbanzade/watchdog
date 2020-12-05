@@ -14,6 +14,7 @@ target_sources(
         watchdog
     PRIVATE
         watchdog.cpp
+        asset_inventory.cpp
         named_pipe_message.cpp
         named_pipe_reader.cpp
         named_pipe_writer.cpp
