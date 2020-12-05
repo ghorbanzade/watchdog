@@ -2,7 +2,7 @@
  * Copyright 2020 Pejman Ghorbanzade. All rights reserved.
  */
 
-#include "named_pipe_reader.hpp"
+#include "watchdog/named_pipe_reader.hpp"
 #include "spdlog/spdlog.h"
 #include <fcntl.h>
 #include <sys/types.h>

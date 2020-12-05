@@ -2,7 +2,7 @@
  * Copyright 2020 Pejman Ghorbanzade. All rights reserved.
  */
 
-#include "watchdog/asset_queue.hpp"
+#include "watchdog/named_pipe_message.hpp"
 
 /**
  *

@@ -9,8 +9,8 @@
 #include <thread>
 #include <filesystem>
 
-#include "watchdog/asset_queue.hpp"
-#include "named_pipe_reader.hpp"
+#include "watchdog/named_pipe_message.hpp"
+#include "watchdog/named_pipe_reader.hpp"
 
 /**
  * Listens to a dedicated named pipe for new directories to watch.

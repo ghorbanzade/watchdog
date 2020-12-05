@@ -6,6 +6,7 @@ include(GenerateExportHeader)
 include(GNUInstallDirs)
 
 watchdog_find_package("fmt")
+watchdog_find_package("spdlog")
 
 add_library(watchdog "")
 
@@ -13,7 +14,8 @@ target_sources(
         watchdog
     PRIVATE
         watchdog.cpp
-        asset_queue.cpp
+        named_pipe_message.cpp
+        named_pipe_reader.cpp
 )
 
 target_include_directories(
@@ -27,6 +29,7 @@ target_link_libraries(
         watchdog
     PUBLIC
         fmt::fmt
+        spdlog::spdlog
 )
 
 set_target_properties(

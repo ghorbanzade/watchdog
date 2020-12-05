@@ -4,8 +4,6 @@
 
 include(GNUInstallDirs)
 
-watchdog_find_package("spdlog")
-
 add_executable(watchdog-daemon "")
 
 set_target_properties(
@@ -17,16 +15,13 @@ set_target_properties(
 target_sources(
         watchdog-daemon
     PRIVATE
-        service.cpp
-        named_pipe_reader.cpp
-        named_pipe_reader.hpp
+        main.cpp
 )
 
 target_link_libraries(
         watchdog-daemon
     PRIVATE
         watchdog
-        spdlog::spdlog
 )
 
 source_group(
