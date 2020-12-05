@@ -5,7 +5,6 @@
 #include "spdlog/spdlog.h"
 #include "watchdog/asset_inventory.hpp"
 #include "watchdog/named_pipe.hpp"
-#include "watchdog/watchdog.hpp"
 #include <chrono>
 #include <filesystem>
 #include <iostream>

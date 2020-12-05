@@ -6,7 +6,6 @@
 #include "fmt/format.h"
 #include "spdlog/spdlog.h"
 #include "watchdog/named_pipe.hpp"
-#include "watchdog/watchdog.hpp"
 #include <iostream>
 #include <optional>
 

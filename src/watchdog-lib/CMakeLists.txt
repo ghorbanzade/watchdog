@@ -13,7 +13,6 @@ add_library(watchdog "")
 target_sources(
         watchdog
     PRIVATE
-        watchdog.cpp
         asset_inventory.cpp
         named_pipe.cpp
 )

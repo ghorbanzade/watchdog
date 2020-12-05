@@ -9,8 +9,8 @@ add_executable(watchdog-tests "")
 target_sources(
         watchdog-tests
     PRIVATE
-        watchdog.cpp
         main.cpp
+        named_pipe.cpp
 )
 
 target_link_libraries(
