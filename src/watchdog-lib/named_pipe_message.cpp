@@ -5,6 +5,36 @@
 #include "watchdog/named_pipe_message.hpp"
 #include <iostream>
 #include <string>
+#include <algorithm>
+
+/**
+ *
+ */
+NamedPipeMessage::NamedPipeMessage(const std::string& message)
+    : _mode(""), _filepath(std::nullopt)
+{
+    std::string buf;
+    std::stringstream ss(message);
+    std::vector<std::string> tokens;
+    while (std::getline(ss, buf, ','))
+    {
+        tokens.push_back(buf);
+    }
+    if (tokens.empty())
+    {
+        return;
+    }
+    const auto& modes = { "a", "r", "l", "c", "m" };
+    const auto& it = std::find(modes.begin(), modes.end(), tokens.at(0));
+    if (modes.end() != it)
+    {
+        _mode = *it;
+    }
+    if (1 < tokens.size())
+    {
+        _filepath = tokens.at(1);
+    }
+}
 
 /**
  *
@@ -34,28 +64,4 @@ std::unique_ptr<NamedPipeMessage> NamedPipeMessageQueue::pop_message()
     auto asset = std::move(_queue.front());
     _queue.pop();
     return asset;
-}
-
-/**
- *
- */
-std::unique_ptr<NamedPipeMessage> NamedPipeMessage::deserialize(
-    const std::string& message)
-{
-    std::string buf;
-    std::stringstream ss(message);
-    std::vector<std::string> tokens;
-    while (std::getline(ss, buf, ','))
-    {
-        tokens.push_back(buf);
-    }
-    if (tokens.size() == 0)
-    {
-        return nullptr;
-    }
-    if (tokens.size() == 1)
-    {
-        return std::make_unique<NamedPipeMessage>(tokens.at(0), "");
-    }
-    return std::make_unique<NamedPipeMessage>(tokens.at(0), tokens.at(1));
 }

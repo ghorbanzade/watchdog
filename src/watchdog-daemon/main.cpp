@@ -32,8 +32,8 @@ void named_pipe_listener(NamedPipeMessageQueue& messageQueue)
         }
 
         spdlog::info("received command: {}", content);
-        auto message = NamedPipeMessage::deserialize(content);
-        if (!message)
+        auto message = std::make_unique<NamedPipeMessage>(content);
+        if (!message->valid())
         {
             spdlog::warn("invalid command: {}", content);
             continue;

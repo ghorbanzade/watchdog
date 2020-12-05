@@ -11,17 +11,23 @@
 #include <optional>
 #include <queue>
 
+/**
+ *
+ */
 struct WATCHDOG_API NamedPipeMessage
 {
-    const std::string _mode;
-    const std::optional<std::string> _filepath;
-    static std::unique_ptr<NamedPipeMessage> deserialize(const std::string& message);
+    std::string _mode;
+    std::optional<std::string> _filepath;
 
-    NamedPipeMessage(const std::string& mode, const std::string& filepath)
-        : _mode(mode)
-        , _filepath(filepath.empty() ? std::optional<std::string>() : filepath)
-    {
-    }
+    /**
+     *
+     */
+    NamedPipeMessage(const std::string& message);
+
+    /**
+     *
+     */
+    inline bool valid() const { return !_mode.empty(); }
 };
 
 /**
