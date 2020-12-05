@@ -5,9 +5,7 @@
 #pragma once
 
 /**
- * @file named_pipe.hpp
- *
- * @brief Utility classes for interacting with Named Pipes.
+ * @file inventory.hpp
  *
  * @author Pejman Ghorbanzade <pejman@ghorbanzade.com>
  * @date 2020
@@ -23,9 +21,9 @@ namespace watchdog {
     /**
      *
      */
-    class WATCHDOG_API AssetInventory
+    class WATCHDOG_API Inventory
     {
-        std::unordered_set<std::string> assets;
+        std::unordered_set<std::string> items;
 
     public:
         /**

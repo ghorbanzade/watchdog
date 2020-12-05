@@ -69,8 +69,9 @@ namespace watchdog {
             {
                 _cv.wait(lock);
             }
-            auto asset = std::move(_queue.front());
+            auto item = std::move(_queue.front());
             _queue.pop();
+            return item;
             return asset;
         }
     };

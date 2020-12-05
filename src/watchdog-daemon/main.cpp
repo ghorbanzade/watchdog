@@ -3,7 +3,7 @@
  */
 
 #include "spdlog/spdlog.h"
-#include "watchdog/asset_inventory.hpp"
+#include "watchdog/inventory.hpp"
 #include "watchdog/named_pipe.hpp"
 #include "watchdog/queue.hpp"
 #include <chrono>
@@ -52,7 +52,7 @@ void named_pipe_reader(NamedPipeMessageQueue& messageQueue)
 /**
  *
  */
-void inventory_manager(NamedPipeMessageQueue& messageQueue, AssetInventory& inventory)
+void inventory_manager(NamedPipeMessageQueue& messageQueue, Inventory& inventory)
 {
     NamedPipeWriter writer("/tmp/watchdog/sout", O_RDWR);
     while (true)
@@ -82,7 +82,7 @@ void inventory_manager(NamedPipeMessageQueue& messageQueue, AssetInventory& inve
  */
 int main()
 {
-    AssetInventory inventory;
+    Inventory inventory;
     NamedPipeMessageQueue messageQueue;
 
     std::vector<std::thread> workers;
