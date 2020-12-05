@@ -72,7 +72,19 @@ namespace watchdog {
             auto item = std::move(_queue.front());
             _queue.pop();
             return item;
-            return asset;
+        }
+
+        /**
+         * @brief Attempts to safely check if queue is empty.
+         *
+         * @details Intended for use by consumer threads.
+         *
+         * @return false if queue is empty.
+         */
+        bool has_item()
+        {
+            std::unique_lock<std::mutex> lock(_mutex);
+            return !_queue.empty();
         }
     };
 

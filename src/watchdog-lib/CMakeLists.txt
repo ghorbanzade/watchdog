@@ -13,6 +13,7 @@ add_library(watchdog "")
 target_sources(
         watchdog
     PRIVATE
+        event.cpp
         inventory.cpp
         named_pipe.cpp
 )

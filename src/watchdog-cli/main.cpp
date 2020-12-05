@@ -25,7 +25,7 @@ std::optional<cxxopts::ParseResult> parse_command_line_arguments(int argc, char*
         ("a,add", "add a given directory to the watch-list", cxxopts::value<std::vector<std::string>>())
         ("c,clear", "clear the watch-list", cxxopts::value<bool>())
         ("l,list", "list directories on the watch-list", cxxopts::value<bool>())
-        ("m,monitor", "prints, in real-time, filesystem events occuring in any directory on the watch-list", cxxopts::value<bool>())
+        ("m,monitor", "prints recent filesystem events occuring in any directory on the watch-list", cxxopts::value<bool>())
         ("help", "prints all supported command line options");
     // clang-format on
 
@@ -160,6 +160,18 @@ int main(int argc, char* argv[])
     if (args->count("monitor"))
     {
         writer.write("m");
+        std::istringstream iss(reader.read());
+        std::string line;
+        unsigned row = 1;
+        while (std::getline(iss, line))
+        {
+            if (line == "l,OK")
+            {
+                std::cout << fmt::format("{0:─^{1}}\n", "", 20) << std::endl;
+                return EXIT_SUCCESS;
+            }
+            std::cout << fmt::format("{:>4} \"{}\"", row++, line) << std::endl;
+        }
         return EXIT_SUCCESS;
     }
 

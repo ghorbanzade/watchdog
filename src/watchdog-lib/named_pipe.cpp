@@ -26,7 +26,7 @@ NamedPipeReader::NamedPipeReader(const std::filesystem::path& path, const int mo
         spdlog::error("failed to create named pipe at {}", _path);
         return;
     }
-    spdlog::info("created named pipe at {}", _path);
+    spdlog::debug("created named pipe at {}", _path);
 }
 
 /**
@@ -37,7 +37,7 @@ NamedPipeReader::~NamedPipeReader()
     if (_fd)
     {
         close(_fd);
-        spdlog::info("removed named pipe");
+        spdlog::debug("removed named pipe");
     }
 }
 
@@ -82,7 +82,7 @@ NamedPipeWriter::NamedPipeWriter(const std::filesystem::path& path, const int mo
         spdlog::error("failed to create named pipe at {}", _path);
         return;
     }
-    spdlog::info("created named pipe at {}", _path);
+    spdlog::debug("created named pipe at {}", _path);
 }
 
 /**
