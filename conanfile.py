@@ -17,13 +17,11 @@ class WatchdogConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {
         "shared": [ True, False ],
-        "with_tests": [ True, False ],
-        "with_tools": [ True, False ]
+        "with_tests": [ True, False ]
     }
     default_options = {
         "shared": False,
-        "with_tests": True,
-        "with_tools": True
+        "with_tests": True
     }
     generators = "cmake_find_package"
     exports_sources = [
@@ -35,9 +33,8 @@ class WatchdogConan(ConanFile):
 
     def requirements(self):
         self.requires.add("fmt/7.1.2")
-        if self.options.with_tools:
-            self.requires.add("cxxopts/2.2.1")
-            self.requires.add("spdlog/1.8.1")
+        self.requires.add("cxxopts/2.2.1")
+        self.requires.add("spdlog/1.8.1")
 
     def build_requirements(self):
         if self.options.with_tests:
@@ -46,7 +43,6 @@ class WatchdogConan(ConanFile):
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["WATCHDOG_BUILD_TESTS"] = self.options.with_tests
-        cmake.definitions["WATCHDOG_BUILD_TOOLS"] = self.options.with_tools
         cmake.configure()
         return cmake
 
@@ -66,4 +62,6 @@ class WatchdogConan(ConanFile):
         self.cpp_info.name = "watchdog"
         self.cpp_info.components["watchdog"].names["cmake_find_package"] = "watchdog"
         self.cpp_info.components["watchdog"].libs = ["watchdog"]
-        self.cpp_info.components["watchdog"].requires = ["fmt::fmt"]
+        self.cpp_info.components["watchdog"].requires = [
+            "fmt::fmt", "spdlog::spdlog", "cxxopts::cxxopts"
+        ]

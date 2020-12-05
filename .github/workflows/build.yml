@@ -12,7 +12,7 @@ on:
 jobs:
   build-linux:
     name: Build Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         cxx: [g++-9, clang++-9]
@@ -26,6 +26,6 @@ jobs:
        pip install conan --no-cache-dir --upgrade
        conan profile new default --detect
        conan profile update settings.compiler.libcxx=libstdc++11 default
-    - run: ./build.sh --with-tests --with-tools
+    - run: ./build.sh --with-tests
     - run: ./build.sh --test
     - run: ./build.sh --docs

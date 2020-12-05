@@ -8,7 +8,6 @@ usage: $(basename "$0") [ -h | --long-options]
   --debug                   enable debug logs
 
   --with-tests              include unit-tests in build
-  --with-tools              build command-lone in build
 
   --docs                    build library documentation
   --lint                    lint source code
@@ -196,7 +195,6 @@ build_build () {
 
     local cmake_config_watchdog_args=(
         -DWATCHDOG_BUILD_TESTS="$(cmake_option "with-tests")"
-        -DWATCHDOG_BUILD_TOOLS="$(cmake_option "with-tools")"
     )
 
     log_info "fetching dependencies"
@@ -277,7 +275,6 @@ declare -A BUILD_MODES=(
 )
 declare -A BUILD_OPTIONS=(
     ["with-tests"]=0
-    ["with-tools"]=0
 )
 
 for arg in "$@"; do
@@ -312,9 +309,6 @@ for arg in "$@"; do
 
         "--with-tests")
             BUILD_OPTIONS["with-tests"]=1
-            ;;
-        "--with-tools")
-            BUILD_OPTIONS["with-tools"]=1
             ;;
         *)
             log_warning "invalid argument $arg"

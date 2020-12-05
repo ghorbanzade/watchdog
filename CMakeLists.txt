@@ -10,7 +10,6 @@ include(CTest)
 
 option(BUILD_SHARED_LIBS "build watchdog as a shared library" OFF)
 option(WATCHDOG_BUILD_TESTS "build unit-tests" ON)
-option(WATCHDOG_BUILD_TOOLS "build command-line tool" ON)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -60,11 +59,8 @@ set(WATCHDOG_INCLUDE_DIR "${WATCHDOG_ROOT_DIR}/include")
 set(WATCHDOG_GENERATED_DIR "${CMAKE_BINARY_DIR}/generated")
 
 add_subdirectory(src)
-
-if (WATCHDOG_BUILD_TOOLS)
-    add_subdirectory(tools/frontend)
-    add_subdirectory(tools/service)
-endif()
+add_subdirectory(tools/frontend)
+add_subdirectory(tools/service)
 
 if (WATCHDOG_BUILD_TESTS)
     add_subdirectory(tests)
