@@ -13,7 +13,8 @@ void AssetQueue::add_asset(const std::filesystem::path& assetDir)
     auto wasEmpty = _queue.empty();
     _queue.push(assetDir);
     lock.unlock();
-    if (wasEmpty) {
+    if (wasEmpty)
+    {
         _cv.notify_one();
     }
 }

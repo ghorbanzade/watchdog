@@ -9,7 +9,7 @@
 /**
  *
  */
-class NamedPipeReader
+class NamedPipeWriter
 {
     const char* _path; /**< full path to the named pipe */
     char _buffer[1024]; /**< buffer to read messages from */
@@ -18,15 +18,15 @@ public:
     /**
      *
      */
-    NamedPipeReader(const std::filesystem::path& pipe_path);
+    NamedPipeWriter(const std::filesystem::path& pipe_path);
 
     /**
      * Destroys named pipe resources if they were ever allocated.
      */
-    ~NamedPipeReader();
+    ~NamedPipeWriter();
 
     /**
      *
      */
-    std::string read();
+    void write(const std::string& message);
 };

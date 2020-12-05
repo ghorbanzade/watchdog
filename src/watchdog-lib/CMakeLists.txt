@@ -16,6 +16,7 @@ target_sources(
         watchdog.cpp
         named_pipe_message.cpp
         named_pipe_reader.cpp
+        named_pipe_writer.cpp
 )
 
 target_include_directories(

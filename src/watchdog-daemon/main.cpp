@@ -2,12 +2,12 @@
  * Copyright 2020 Pejman Ghorbanzade. All rights reserved.
  */
 
-#include "watchdog/watchdog.hpp"
 #include "spdlog/spdlog.h"
-#include <iostream>
+#include "watchdog/watchdog.hpp"
 #include <chrono>
-#include <thread>
 #include <filesystem>
+#include <iostream>
+#include <thread>
 
 #include "watchdog/named_pipe_message.hpp"
 #include "watchdog/named_pipe_reader.hpp"
@@ -21,20 +21,24 @@ void listen_for_asset_directories(
 {
     using namespace std::chrono_literals;
     NamedPipeReader reader(pipePath);
-    while (true) {
+    while (true)
+    {
         const auto& content = reader.read();
         // if there is nothing to read, we have nothing to do
-        if (content.empty()) {
+        if (content.empty())
+        {
             std::this_thread::sleep_for(2s);
             continue;
         }
         spdlog::info("received command: {}", content);
-        if (content == "exit") {
+        if (content == "exit")
+        {
             spdlog::warn("no longer listening for asset directories");
             break;
         }
         std::filesystem::path assetEntry(content);
-        if (!std::filesystem::is_directory(assetEntry)) {
+        if (!std::filesystem::is_directory(assetEntry))
+        {
             spdlog::warn("asset directory is invalid");
             continue;
         }
@@ -49,8 +53,8 @@ void monitor_assets(AssetQueue& assetQueue)
 {
     while (true)
     {
-      auto asset = assetQueue.take_asset();
-      std::cout << "Got some work: " << asset << std::endl;
+        auto asset = assetQueue.take_asset();
+        std::cout << "Got some work: " << asset << std::endl;
     }
 }
 

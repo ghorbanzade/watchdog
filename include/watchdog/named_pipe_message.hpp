@@ -5,9 +5,9 @@
 #pragma once
 
 #include <condition_variable>
+#include <filesystem>
 #include <mutex>
 #include <queue>
-#include <filesystem>
 
 /**
  *
@@ -17,8 +17,8 @@ class AssetQueue
     std::mutex _mutex;
     std::condition_variable _cv;
     std::queue<std::filesystem::path> _queue;
-public:
 
+public:
     /**
      *
      */
@@ -28,5 +28,4 @@ public:
      *
      */
     std::filesystem::path take_asset();
-
 };
