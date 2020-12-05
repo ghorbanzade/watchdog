@@ -44,7 +44,7 @@ std::string Event::string() const
     std::string actor = "unidentified process";
     if (process_pid && process_path)
     {
-        actor = fmt::format("process {:<30} (pid: {d:>5})", process_path.value(), process_pid.value());
+        actor = fmt::format("process {} (pid: {})", process_path.value(), process_pid.value());
     }
-    return fmt::format("{:<40} {:<10} \"{}\"\n", actor, action, filepath);
+    return fmt::format("{} {} \"{}\"\n", actor, action, filepath);
 }

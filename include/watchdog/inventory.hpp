@@ -13,7 +13,8 @@
 
 #include "watchdog/lib_api.hpp"
 #include <filesystem>
-#include <iostream>
+#include <condition_variable>
+#include <mutex>
 #include <unordered_set>
 
 namespace watchdog {
@@ -23,7 +24,9 @@ namespace watchdog {
      */
     class WATCHDOG_API Inventory
     {
-        std::unordered_set<std::string> items;
+        std::mutex _mutex;
+        std::condition_variable _cv;
+        std::unordered_set<std::string> _items;
 
     public:
         /**
@@ -39,7 +42,7 @@ namespace watchdog {
         /**
          *
          */
-        std::string list() const;
+        std::unordered_set<std::string> list();
     };
 
 } // namespace watchdog

@@ -10,6 +10,7 @@
 #include <chrono>
 #include <filesystem>
 #include <iostream>
+#include <sstream>
 #include <sys/inotify.h>
 #include <thread>
 
@@ -77,7 +78,12 @@ void inventory_manager(
         }
         if (msg->message_type == "l")
         {
-            writer.write(inventory.list());
+            std::ostringstream buffer;
+            for (const auto& item : inventory.list())
+            {
+                buffer << item << "\n";
+            }
+            writer.write(buffer.str());
             writer.write("l,OK");
         }
         if (msg->message_type == "m")
@@ -95,16 +101,57 @@ void inventory_manager(
 /**
  *
  */
-void event_collector_basic(
+std::vector<std::string> read_lsof(const std::string& path)
+{
+    std::vector<std::string> output;
+    std::array<char, 256> buffer;
+    const auto cmd = fmt::format("lsof +D {}", path);
+    std::ignore = path;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
+    if (!pipe)
+    {
+        spdlog::warn("failed to run lsof command");
+        return {};
+    }
+    // skip header line in lsof output
+    std::ignore = fgets(buffer.data(), buffer.size(), pipe.get());
+    // iterate over lsof output line by line and add them as separate entries
+    while (fgets(buffer.data(), buffer.size(), pipe.get())) {
+        std::string entry(buffer.data());
+        entry.pop_back();
+        output.push_back(entry);
+    }
+    return output;
+}
+
+/**
+ *
+ */
+void event_collector_lsof(
     Inventory& inventory,
     EventQueue& eventQueue)
 {
-    std::ignore = inventory;
+    using namespace std::chrono_literals;
     while (true)
     {
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(5s);
-        eventQueue.push_item(std::make_unique<Event>("some-file", IN_OPEN));
+        for (const auto& dir: inventory.list())
+        {
+            for (const auto& entry: read_lsof(dir))
+            {
+                std::istringstream iss(entry);
+                std::vector<std::string> tokens(
+                    std::istream_iterator<std::string>{iss},
+                    std::istream_iterator<std::string>{});
+                if (tokens.size() != 9)
+                {
+                    spdlog::warn("invalid lsof entry: {}, {}", tokens.size(), entry);
+                    continue;
+                }
+                const auto pid = std::strtol(tokens.at(1).c_str(), nullptr, 10);
+                eventQueue.push_item(std::make_unique<Event>(tokens.at(8), IN_OPEN,pid, tokens.at(0)));
+            }
+        }
+        std::this_thread::sleep_for(1s);
     }
 }
 
@@ -120,9 +167,9 @@ int main()
     std::vector<std::thread> workers;
     workers.push_back(std::thread(named_pipe_reader, std::ref(messageQueue)));
     workers.push_back(std::thread(inventory_manager, std::ref(messageQueue), std::ref(inventory), std::ref(eventQueue)));
-    workers.push_back(std::thread(event_collector_basic, std::ref(inventory), std::ref(eventQueue)));
-    // workers.push_back(std::thread(event_collector_lsof, std::ref(eventQueue), std::ref(inventory)));
+    workers.push_back(std::thread(event_collector_lsof, std::ref(inventory), std::ref(eventQueue)));
     // workers.push_back(std::thread(event_collector_inotify, std::ref(eventQueue), std::ref(inventory)));
+    // workers.push_back(std::thread(event_collector_poll, std::ref(eventQueue), std::ref(inventory)));
 
     std::for_each(workers.begin(), workers.end(), [](auto& t) { t.join(); });
 }

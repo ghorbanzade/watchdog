@@ -3,7 +3,6 @@
  */
 
 #include "watchdog/inventory.hpp"
-#include <sstream>
 
 using namespace watchdog;
 
@@ -12,7 +11,14 @@ using namespace watchdog;
  */
 void Inventory::add(const std::filesystem::path& directory)
 {
-    items.insert(directory.string());
+    std::unique_lock<std::mutex> lock(_mutex);
+    const auto wasEmpty = _items.empty();
+    _items.insert(directory.string());
+    lock.unlock();
+    if (wasEmpty)
+    {
+        _cv.notify_one();
+    }
 }
 
 /**
@@ -20,18 +26,15 @@ void Inventory::add(const std::filesystem::path& directory)
  */
 void Inventory::clear()
 {
-    items.clear();
+    std::unique_lock<std::mutex> lock(_mutex);
+    _items.clear();
 }
 
 /**
  *
  */
-std::string Inventory::list() const
+std::unordered_set<std::string> Inventory::list()
 {
-    std::ostringstream buffer;
-    for (const auto& item : items)
-    {
-        buffer << item << "\n";
-    }
-    return buffer.str();
+    std::unique_lock<std::mutex> lock(_mutex);
+    return _items;
 }

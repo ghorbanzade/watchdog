@@ -46,7 +46,7 @@ namespace watchdog {
         void push_item(std::unique_ptr<Task> item)
         {
             std::unique_lock<std::mutex> lock(_mutex);
-            auto wasEmpty = _queue.empty();
+            const auto wasEmpty = _queue.empty();
             _queue.push(std::move(item));
             lock.unlock();
             if (wasEmpty)
