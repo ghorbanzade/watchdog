@@ -7,11 +7,11 @@
 #include "watchdog/inventory.hpp"
 #include "watchdog/named_pipe.hpp"
 #include "watchdog/queue.hpp"
+#include <array>
 #include <chrono>
 #include <filesystem>
 #include <iostream>
 #include <sstream>
-#include <sys/inotify.h>
 #include <thread>
 
 using namespace watchdog;
@@ -148,7 +148,7 @@ void event_collector_lsof(
                     continue;
                 }
                 const auto pid = std::strtol(tokens.at(1).c_str(), nullptr, 10);
-                eventQueue.push_item(std::make_unique<Event>(tokens.at(8), IN_OPEN,pid, tokens.at(0)));
+                eventQueue.push_item(std::make_unique<Event>(tokens.at(8), pid, tokens.at(0)));
             }
         }
         std::this_thread::sleep_for(1s);

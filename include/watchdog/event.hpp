@@ -12,7 +12,9 @@
  */
 
 #include "watchdog/lib_api.hpp"
+#include <cstdint>
 #include <optional>
+#include <string>
 
 namespace watchdog {
 
@@ -23,7 +25,6 @@ namespace watchdog {
     {
     private:
         std::string filepath;
-        uint32_t event_type;
         std::optional<pid_t> process_pid;
         std::optional<std::string> process_path;
 
@@ -31,12 +32,12 @@ namespace watchdog {
         /**
          *
          */
-        Event(const std::string& filepath, const uint32_t event_type);
+        Event(const std::string& filepath);
 
         /**
          *
          */
-        Event(const std::string& filepath, const uint32_t event_type, std::optional<pid_t> process_pid, std::optional<std::string> process_path);
+        Event(const std::string& filepath, std::optional<pid_t> process_pid, std::optional<std::string> process_path);
 
         /**
          *

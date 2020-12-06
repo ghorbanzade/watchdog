@@ -5,7 +5,7 @@
 #include "watchdog/named_pipe.hpp"
 #include "spdlog/spdlog.h"
 #include <algorithm>
-#include <iostream>
+#include <sstream>
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>

@@ -4,7 +4,6 @@
 
 #include "watchdog/event.hpp"
 #include "fmt/format.h"
-#include <cstdint>
 #include <optional>
 
 using namespace watchdog;
@@ -12,11 +11,7 @@ using namespace watchdog;
 /**
  *
  */
-Event::Event(
-    const std::string& filepath,
-    const std::uint32_t event_type)
-    : filepath(filepath)
-    , event_type(event_type)
+Event::Event(const std::string& filepath) : filepath(filepath)
 {
 }
 
@@ -25,11 +20,9 @@ Event::Event(
  */
 Event::Event(
     const std::string& filepath,
-    const std::uint32_t event_type,
     std::optional<pid_t> process_pid,
     std::optional<std::string> process_path)
     : filepath(filepath)
-    , event_type(event_type)
     , process_pid(process_pid)
     , process_path(process_path)
 {

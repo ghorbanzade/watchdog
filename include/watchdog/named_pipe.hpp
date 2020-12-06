@@ -94,7 +94,6 @@ namespace watchdog {
     class NamedPipeWriter
     {
         const std::string _path; /**< full path to the named pipe */
-        char _buffer[1024]; /**< buffer to read messages from */
         int _fd; /**< descriptor for the named pipe */
     public:
         /**
