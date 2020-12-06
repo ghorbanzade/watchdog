@@ -139,14 +139,81 @@ In addition, since we are periodically polling `lsof`, there is always
 a chance that we miss file accesses that start and terminate during our
 polling interval.
 
+We can address these issues, by improving our implementation of this event
+collector, and by incorporating separate independent event collectors to
+cross-reference our findings. In addition, using a separate complementary
+approach of tracking processes' activities rather than filesystem objects,
+we may have further improve our coverage of identifying events.
+Suggestions on these topics are provided in the "Future Work" section below.
+
 ### Message Queues
+
+Our implementation of event queue is very crude and prone to exploitation.
+In the current design, the queue can be easily overflowed by a potential
+attacker seeking to generate a large number of events. While imposing a
+strict limit on the size of the queue may lead to the lose of information,
+it is still possible to limit inflows to the queue by monitoring its inflow.
+Another possible approach is to improve the implementation to better handle
+queue overflows. While these mitigations may not prevent lose of information,
+we believe they may help control it.
 
 ### Using Named Pipes
 
+As we mentioned earlier, we think that using Named Pipes is error-prone and
+inefficient. Named Pipes do not offer any means for correctly handling multiple
+readers. If multiple instances of command-line tool are running at the
+same time, the response issues for the request from one instance may be
+read and consumed by another.
+
+We believe the only solution to this issue is a complete replacement of this
+mechanism with a less primitive mechanism such as using sockets. This way we
+can distinguish between different clients and effectively serve their requests.
+
 ## Future Work
 
-### Using Additional Filesystem Event Collectors
+### Additional Event Collectors
 
-### Improve Resiliency against Disruption
+To improve our success in capturing all file system events, we propose
+implementing additional event collectors as separate independent sources
+of information.
+
+Two candidate options for collecting such information are `inotify` and
+`auditctl` (if available):
+
+* `inotify` may be missing process information but is widely-recognized as
+  the primary API for capturing filesystem change events. Knowing these events
+  can at least help us determine that we are missing important information
+  from `lsof` and other sources.
+
+* `auditctl` may not be available on all machines but it can provide valuable
+  information about processes and the files they access.
+
+We can also use separate different approaches to enhance our coverage:
+
+* We can query the list of running processes and audit the list of files
+  they are accessing. To catch missed events, we can periodically scan the
+  directories under watch and maintain records of the existing files and some
+  of their properties such as content hash and last modified date.
+
+* We can place "canary" files in the directories under watch and attempt to
+  identify and stop any other process that may access/modify them.
+
+### Tracking Process Activities
+
+We can improve our findings by maintaining records on activities of each
+process, excluding processes on our approved lists and attempting to detect
+if they form a pattern similar to milicious applications.
+
+### Improved Resiliency
+
+To fight against code-injection and other direct attacks, we can check the
+integrity of our client processes before trusting their requests.
+
+### Intrusive Protection
+
+As a next step, by establishing patterns about activities of processes, it
+is possible to compare them against patterns of known malicious softwares.
+If we are running with root-level permissions, it is possible to take action
+against such processes and intrusively fight them.
 
 [Running.md]: ./Running.md
