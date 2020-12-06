@@ -64,7 +64,8 @@ tool interprets the provided command-line arguments and passes the request
 to the daemon.
 
 Currently, the two watchdog components interact with each other through
-two named pipes (see next section for why we think this is a bad idea).
+two named pipes (see the "Limitations" section for why we think this is
+a bad idea).
 The command-line tool uses one of the pipes, to submit *request messages* to
 the daemon, and a separate pipe to receive responses from the daemon.
 
@@ -74,8 +75,8 @@ receive the requests from one thread and respond to them in another thread.
 But this asynchronous process may lead to unintended side effects specially
 when using named pipes. If the daemon responds to multiple requests in
 succession, the client may read and discard the succeeding messages.
-As explained in the next section, given more time, we will likely reverse
-this decision.
+As explained in the "Limitations" section, given more time, we will
+likely reverse this decision.
 
 Currently, "Request Messages" are serialized into string using a very simple
 logic that separates the "message type" from its potentially empty "content"
@@ -85,10 +86,67 @@ an established protocol based on a well-defined schema.
 
 ### Daemon Architecture
 
-### Collecting Filesystem Events
+Watchdog deamon is designed for simplicity and modularity. It uses a simple
+thread pool to manage workers that each perform separate tasks, while having
+limited interactions with each other to communicate the results of those
+tasks.
+
+As of v1.0 (which should be considered as v0.0.1), the daemon uses three
+separate threads whose responsibilties can be summarized as follows:
+
+* `named_pipe_reader`: handles requests received from the command-line tool.
+  This thread listens to a named pipe and deserializes any recieved request
+  into a `NamedPipeMessage` which is *pushed* into a `NamedPipeMessageQueue`
+  queue.
+
+* `inventory_manager`: performs requests received by the client and submits
+  responses to a named pipe for consumption by the command-line tool. Since
+  one possible request is to report collected filesystem events, this thread
+  is one and only consumer of the filesystem event queue.
+
+* `event_collector_lsof`: uses the `lsof` utility command line tool to collect
+  information about the open files in directories under watch and generate
+  `Event` instances representing file system events that are put into the
+  filesystem event queue.
+
+The thread `event_collector_lsof` is the only producer of Filesystem events
+in the current implementation. But this general design allows for having
+multiple "event collector" threads that use different mechanism to capture
+useful information from different sources that may complement each other
+and contribute to forming a better understanding of the events.
+
+While using multiple "event collectors" makes sense, we can always except
+overlap in the collected information which requires introduction of a new
+aggregator module that keeps track of the captured data and eliminates
+duplicate events that are previously reported by other event collectors.
+Correctly implementing this feature requires more time and research.
 
 ## Limitations
 
+### Collecting Filesystem Events
+
+Currently, we are only using one source `lsof` to collect relevant information.
+`lsof` is very powerful and is useful as *one* source of information but
+lacks many essential features which make the case that it should not be
+the *only* source of information. As an example, `lsof` is meant to list
+open files; it is not the right tool to detect creation or deletion of files,
+or renaming or moving them, which are the among the events of interest to us.
+
+Moreover, the way we are using `lsof` to collect information is far from
+desirable. To start, we are piping into `lsof` as a separate process which
+is a general bad practice and makes `lsof` a potential attack vector.
+In addition, since we are periodically polling `lsof`, there is always
+a chance that we miss file accesses that start and terminate during our
+polling interval.
+
+### Message Queues
+
+### Using Named Pipes
+
 ## Future Work
+
+### Using Additional Filesystem Event Collectors
+
+### Improve Resiliency against Disruption
 
 [Running.md]: ./Running.md
