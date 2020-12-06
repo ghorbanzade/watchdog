@@ -16,8 +16,8 @@
 ## Setting Up the Named Pipes
 
 The two components mentioned above are designed to communicate with
-eachother through two dedicated named pipes. As explained this in the
-[Design Documentation], this design is far from ideal, since it could
+eachother through two dedicated named pipes. As explained in the
+[Design] document, this design is far from ideal, since it could
 lead to unintended behaviors when multiple `watchdog` instances are
 running at the same time.
 
@@ -162,7 +162,6 @@ cleared the list of directories under watch
   that we know how to fix but are deferring making any changes to the code for
   the time being.
 
-Other known design issues are covered in the [Limitations] document.
+Other known design issues are covered in the [Design] document.
 
-[Design Documentation]: (./Design.md)
-[Limitations]: (./Limitations.md)
+[Design]: ./Design.md

@@ -22,9 +22,7 @@ file change events and do not need process information.
 ## Helpful Links
 
 * [Design](./docs/Design.md)
-* [Build Instructions](./docs/Build.md)
+* [Building](./docs/Build.md)
 * [Running](./docs/Running.md)
-* [Limitations](./docs/Limitations.md)
-* [Roadmap](./docs/Roadmap.md)
 
 [fswatch]: https://github.com/emcrisostomo/fswatch

@@ -10,9 +10,9 @@ you will need a Linux platform to run any of the application components.
 ### Required Build Dependencies:
 
 * Reasonably recent version of `gcc` or `clang`
-* Bash (*v4.4 or higher*)
-* **Conan**
-* **CMake**
+* `Bash` (*v4.4 or higher*)
+* `Conan`
+* `CMake`
 
 ### Optional Build Dependencies:
 
@@ -22,12 +22,24 @@ you will need a Linux platform to run any of the application components.
   it over `make`.
 * `doxygen`: only required for building project documentation.
 
+### Third-party Libraries
+
+This software makes use of the following third-party libraries. These
+dependencies are entirely managed by `conan`. Given that they are all
+header-only libraries, it is easy to integrate with them if we have
+reasons not to use `conan`.
+
+* fmt (v7.1.2): for simple text formatting
+* spdlog (1.8.1): for basic logging in `watchdogd`
+* cxxopts (v2.2.1): for managing command line arguments of `watchdog`
+* catch2 (v2.12.2): for unit-testing
+
 ## Building Watchdog
 
-For convenience, we provide `build.sh` (required bash v4.4 or higher) which
-can be run to pull third-party project dependencies using Conan and build
-the project using CMake. The build script can also be used to build project
-documentation, and to build and run project unit-tests.
+For convenience, we provide `build.sh` (required bash v4.4 or higher)
+which can be run to pull third-party libraries using Conan and build
+the project using CMake. The build script can also be used to build
+project documentation, and to build and run project unit-tests.
 
 If you prefer not to use `build.sh`, checkout the implementation of `build.sh`
 or our Github Actions CI workflow to learn how to run `conan` and `cmake`.
