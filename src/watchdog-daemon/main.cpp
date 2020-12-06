@@ -116,7 +116,8 @@ std::vector<std::string> read_lsof(const std::string& path)
     // skip header line in lsof output
     std::ignore = fgets(buffer.data(), buffer.size(), pipe.get());
     // iterate over lsof output line by line and add them as separate entries
-    while (fgets(buffer.data(), buffer.size(), pipe.get())) {
+    while (fgets(buffer.data(), buffer.size(), pipe.get()))
+    {
         std::string entry(buffer.data());
         entry.pop_back();
         output.push_back(entry);
@@ -134,14 +135,14 @@ void event_collector_lsof(
     using namespace std::chrono_literals;
     while (true)
     {
-        for (const auto& dir: inventory.list())
+        for (const auto& dir : inventory.list())
         {
-            for (const auto& entry: read_lsof(dir))
+            for (const auto& entry : read_lsof(dir))
             {
                 std::istringstream iss(entry);
                 std::vector<std::string> tokens(
-                    std::istream_iterator<std::string>{iss},
-                    std::istream_iterator<std::string>{});
+                    std::istream_iterator<std::string> { iss },
+                    std::istream_iterator<std::string> {});
                 if (tokens.size() != 9)
                 {
                     spdlog::warn("invalid lsof entry: {}, {}", tokens.size(), entry);

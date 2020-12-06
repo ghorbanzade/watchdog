@@ -11,7 +11,8 @@ using namespace watchdog;
 /**
  *
  */
-Event::Event(const std::string& filepath) : filepath(filepath)
+Event::Event(const std::string& filepath)
+    : filepath(filepath)
 {
 }
 

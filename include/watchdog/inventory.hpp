@@ -12,8 +12,8 @@
  */
 
 #include "watchdog/lib_api.hpp"
-#include <filesystem>
 #include <condition_variable>
+#include <filesystem>
 #include <mutex>
 #include <unordered_set>
 
