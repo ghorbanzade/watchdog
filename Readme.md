@@ -4,7 +4,27 @@
 
 ## Introduction
 
-Watchdog is a C++ library and command line tool for monitoring filesystem
-activities in a given directory. It provides basic information about any
-process that attempts to access or modify any filesystem object in the
-directory under watch.
+Watchdog is a simple filesystem event monitoring application for Linux.
+It helps collect basic information about processes that access or modify
+filesystem objects in a speficied set of directories.
+
+The most well-known API to detect filesystem events is `inotify`. But the
+`inotify` API does not provide any information about the user or process
+that initiates events. Watchdog attempts to find this information by using
+the command-line tool `lsof` that is designed to Lists Open Files.
+
+**Note**: This project was designed and developed in less than a day and as
+a proof of concept. It is too crude to be used as a dependency for any side
+project, let alone in production code.
+We recommend that you checkout [fswatch] if you are simply looking to capture
+file change events and do not need process information.
+
+## Helpful Links
+
+* [Design](./docs/Design.md)
+* [Build Instructions](./docs/Build.md)
+* [Running](./docs/Running.md)
+* [Limitations](./docs/Limitations.md)
+* [Roadmap](./docs/Roadmap.md)
+
+[fswatch]: https://github.com/emcrisostomo/fswatch
