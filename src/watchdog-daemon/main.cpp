@@ -10,7 +10,6 @@
 #include <array>
 #include <chrono>
 #include <filesystem>
-#include <iostream>
 #include <sstream>
 #include <thread>
 
@@ -169,8 +168,6 @@ int main()
     workers.push_back(std::thread(named_pipe_reader, std::ref(messageQueue)));
     workers.push_back(std::thread(inventory_manager, std::ref(messageQueue), std::ref(inventory), std::ref(eventQueue)));
     workers.push_back(std::thread(event_collector_lsof, std::ref(inventory), std::ref(eventQueue)));
-    // workers.push_back(std::thread(event_collector_inotify, std::ref(eventQueue), std::ref(inventory)));
-    // workers.push_back(std::thread(event_collector_poll, std::ref(eventQueue), std::ref(inventory)));
 
     std::for_each(workers.begin(), workers.end(), [](auto& t) { t.join(); });
 }

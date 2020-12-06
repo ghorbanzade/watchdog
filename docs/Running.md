@@ -101,16 +101,17 @@ Now let us see what processes are using this directory or any of its files:
 ```txt
 $ ./local/dist/bin/watchdog -m
 
-   1 process bash (pid: 81378) accessed "/home/pejman/watchdog"
-   2 process bash (pid: 81473) accessed "/home/pejman/watchdog"
-   3 process cpptools (pid: 81502) accessed "/home/pejman/watchdog"
-   4 process node (pid: 82492) accessed "/home/pejman/watchdog"
-   5 process bash (pid: 82858) accessed "/home/pejman/watchdog"
-   6 process watchdogd (pid: 120175) accessed "/home/pejman/watchdog"
-   7 process watchdogd (pid: 120175) accessed "/home/pejman/watchdog/local/ditbin/watchdogd""
-   8 process sh (pid: 120426) accessed "/home/pejman/watchdog"
-   9 process lsof (pid: 120427) accessed "/home/pejman/watchdog"
-  10 process lsof (pid: 120428) accessed "/home/pejman/watchdog"
+ row name          PID   filepath
+   1 bash         81378  /home/pejman/watchdog
+   2 bash         81473  /home/pejman/watchdog
+   3 cpptools     81502  /home/pejman/watchdog
+   4 node         82492  /home/pejman/watchdog
+   5 bash         82858  /home/pejman/watchdog
+   6 watchdogd    120175 /home/pejman/watchdog
+   7 watchdogd    120175 /home/pejman/watchdog/local/ditbin/watchdogd"
+   8 sh           120426 /home/pejman/watchdog
+   9 lsof         120427 /home/pejman/watchdog
+  10 lsof         120428 /home/pejman/watchdog
 ```
 
 Note that this command returns as soon as we consume all filesystem events

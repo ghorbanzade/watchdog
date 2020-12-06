@@ -34,11 +34,6 @@ Event::Event(
  */
 std::string Event::string() const
 {
-    const auto action = "accessed";
-    std::string actor = "unidentified process";
-    if (process_pid && process_path)
-    {
-        actor = fmt::format("process {} (pid: {})", process_path.value(), process_pid.value());
-    }
-    return fmt::format("{} {} \"{}\"\n", actor, action, filepath);
+    return fmt::format("{:<10} {:>7} {:<30}\n",
+        process_path.value_or("-"), process_pid.value_or(-1), filepath);
 }

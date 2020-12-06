@@ -144,16 +144,16 @@ int main(int argc, char* argv[])
         writer.write("l");
         std::istringstream iss(reader.read());
         std::string line;
-        std::cout << "Watchdog is currently monitoring the following files:\n";
         unsigned row = 1;
+        fmt::print("currently monitoring the following files:\n");
         while (std::getline(iss, line))
         {
             if (line == "l,OK")
             {
-                std::cout << fmt::format("{0:─^{1}}\n", "", 20) << std::endl;
+                fmt::print("{0:─^{1}}\n", "", 20);
                 return EXIT_SUCCESS;
             }
-            std::cout << fmt::format("{:>4} \"{}\"", row++, line) << std::endl;
+            fmt::print("{:>4} \"{}\"\n", row++, line);
         }
     }
 
@@ -163,14 +163,15 @@ int main(int argc, char* argv[])
         std::istringstream iss(reader.read());
         std::string line;
         unsigned row = 1;
+        fmt::print("{:>4} {:<10} {:>7} {:<30}\n", "row", "name", "PID", "filepath");
         while (std::getline(iss, line))
         {
             if (line == "l,OK")
             {
-                std::cout << fmt::format("{0:─^{1}}\n", "", 20) << std::endl;
+                fmt::print("{0:─^{1}}\n", "", 20);
                 return EXIT_SUCCESS;
             }
-            std::cout << fmt::format("{:>4} \"{}\"", row++, line) << std::endl;
+            fmt::print("{:>4} {}\n", row++, line);
         }
         return EXIT_SUCCESS;
     }
