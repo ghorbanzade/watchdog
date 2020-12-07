@@ -29,4 +29,12 @@ source_group(
     FILES $<TARGET_PROPERTY:watchdog-daemon,SOURCES>
 )
 
-install(TARGETS watchdog-daemon)
+install(TARGETS watchdog-daemon
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT Watchdog_Runtime
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            COMPONENT Watchdog_Runtime
+            NAMELINK_COMPONENT Watchdog_Development
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            COMPONENT Watchdog_Development
+)

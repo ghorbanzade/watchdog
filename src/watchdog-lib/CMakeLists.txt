@@ -52,7 +52,15 @@ generate_export_header(
     EXPORT_FILE_NAME "${CMAKE_BINARY_DIR}/generated/watchdog/lib_api.hpp"
 )
 
-install(TARGETS watchdog)
+install(TARGETS watchdog
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            COMPONENT Watchdog_Runtime
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            COMPONENT Watchdog_Runtime
+            NAMELINK_COMPONENT Watchdog_Development
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            COMPONENT Watchdog_Development
+)
 install(DIRECTORY "${WATCHDOG_ROOT_DIR}/include/watchdog"
         DESTINATION include MESSAGE_NEVER FILES_MATCHING PATTERN "*.h*")
 install(DIRECTORY "${CMAKE_BINARY_DIR}/generated/watchdog"
