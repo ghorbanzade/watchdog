@@ -2,7 +2,7 @@
 Description=Watchdog Filesystem Event Monitoring Service
 
 [Service]
-ExecStart=/home/pejman/watchdog/local/dist/bin/watchdogd
+ExecStart=/usr/sbin/watchdogd
 
 [Install]
 WantedBy=multi-user.target
